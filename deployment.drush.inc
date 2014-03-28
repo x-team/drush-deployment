@@ -34,7 +34,7 @@ function deployment_drush_command() {
     'bootstrap' => DRUSH_BOOTSTRAP_DRUSH,
     'config' => 'deployment',
   );
-  
+
 
 
   $loader = new DrushAutoLoader();
@@ -65,7 +65,7 @@ function deployment_drush_command() {
 function deployment_drush_init() {
   // Load deploy config files.
   foreach (drush_context_names() as $context) {
-    drush_load_config_file($context, _drush_config_file($context, 'deploy'));
+    drush_load_config_file($context, _drush_config_file($context, 'deployment'));
   }
   $tasks = \Drush\Deployment\Deployment::getTasks();
 }
