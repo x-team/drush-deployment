@@ -11,7 +11,7 @@ ex.3
 drush deployment pre-release-check --tag=ver1
 
 
-
+```
 /**
  * Implementation of hook_drush_command().
  */
@@ -31,5 +31,5 @@ function deployment_drush_command() {
     'bootstrap' => DRUSH_BOOTSTRAP_DRUSH,
     'config' => 'deployment',
   );
- 
-
+}
+```
