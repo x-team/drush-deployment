@@ -10,15 +10,17 @@ require 'DrushAutoLoader.php';
 require 'upstream.inc';
 
 /**
- * Ipmlementation of hook_drush_help().
+ * Implements hook_drush_help().
  */
-function deployment_drush_help($section) {
+function drush_deployment_drush_help($section) {
+  //
 }
 
+
 /**
- * Implementation of hook_drush_command().
+ * Implements hook_drush_command().
  */
-function deployment_drush_command() {
+function drush_deployment_drush_command() {
   $items = array();
   $items['deployment'] = array(
     'description' => '',
@@ -35,8 +37,6 @@ function deployment_drush_command() {
     'config' => 'deployment',
   );
 
-
-
   $loader = new DrushAutoLoader();
   $loader->registerNamespace('Drush', __DIR__);
   $loader->registerNamespace('Drush\\Deployment', __DIR__);
@@ -52,7 +52,7 @@ function deployment_drush_command() {
   }
 
   foreach ($items as $command => &$item) {
-    $item['callback'] = 'drush_deployment_callback';
+    $item['callback'] = 'drush_drush_deployment_callback';
     $item['callback arguments'] = array($command);
   }
 
@@ -60,9 +60,9 @@ function deployment_drush_command() {
 }
 
 /**
- * Ipmlementation of hook_drush_init().
+ * Implements hook_drush_init().
  */
-function deployment_drush_init() {
+function drush_deployment_drush_init() {
   // Load deploy config files.
   foreach (drush_context_names() as $context) {
     drush_load_config_file($context, _drush_config_file($context, 'deployment'));
@@ -70,7 +70,7 @@ function deployment_drush_init() {
   $tasks = \Drush\Deployment\Deployment::getTasks();
 }
 
-function deployment_task() {
+function drush_deployment_task() {
   $args = func_get_args();
   $name = array_shift($args);
   if ($args[count($args) - 1] instanceof Closure) {
@@ -82,10 +82,11 @@ function deployment_task() {
   Drush\Deployment\Deployment::$tasks[$name] = $work;
 }
 
+
 /**
- * Implementation of drush_hook_COMMAND().
+ * Implements drush_hook_COMMAND().
  */
-function drush_deployment_callback($command, $alias = NULL) {
+function drush_drush_deployment_callback($command, $alias = NULL) {
   if (empty($alias)) {
     drush_set_error('DRUSH_DEPLOY_ERROR', dt("Must specify a site alias or group of site aliases!"));
     return;
@@ -114,6 +115,7 @@ function drush_deployment_callback($command, $alias = NULL) {
     drush_set_error($e->getMessage());
   }
 }
+
 
 function drush_deployment_transaction(&$obj = NULL, $commands) {
   if ($obj) {

@@ -1,1 +1,5 @@
 <?php
+
+function drush_deployment_init() {
+  module_invoke_all('rollback_N');
+}
