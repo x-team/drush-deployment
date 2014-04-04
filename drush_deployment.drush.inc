@@ -68,6 +68,7 @@ function drush_deployment_drush_command() {
   return $items;
 }
 
+
 /**
  * Implements hook_drush_init().
  */
@@ -79,6 +80,10 @@ function drush_deployment_drush_init() {
   $tasks = \Drush\Deployment\Deployment::getTasks();
 }
 
+
+/**
+ * Drush task.
+ */
 function drush_deployment_task() {
   $args = func_get_args();
   $name = array_shift($args);
@@ -126,6 +131,9 @@ function drush_drush_deployment_callback($command, $alias = NULL) {
 }
 
 
+/**
+ * Drush transaction.
+ */
 function drush_deployment_transaction(&$obj = NULL, $commands) {
   if ($obj) {
     foreach ($commands as $i => $cmd) {
