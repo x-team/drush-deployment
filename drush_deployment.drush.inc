@@ -13,7 +13,16 @@ require 'upstream.inc';
  * Implements hook_drush_help().
  */
 function drush_deployment_drush_help($section) {
-  //
+  switch ($section) {
+    case 'drush:release-pre-check':
+      return dt('Check everything before releasing.');
+    case 'drush:release-cleanup':
+      return dt('Clean up after release.');
+    case 'drush:release-rollback':
+      return dt('Rollback just in case something went wrong.');
+    case 'drush:release-post-check':
+      return dt('Perform necessary check up after the release.');
+  }
 }
 
 
@@ -31,7 +40,7 @@ function drush_deployment_drush_command() {
       'tag' => 'e.g. ver1, ver2, tagname'
     ),
     'examples' => array(
-      'drush deployment release --tag=ver1' => 'sample drush deployment using release with tagname'
+      'drush release --tag=ver1' => 'Sample drush deployment using release with tagname'
     ),
     'bootstrap' => DRUSH_BOOTSTRAP_DRUSH,
     'config' => 'deployment',
