@@ -22,7 +22,7 @@ function drush_deployment_drush_help($section) {
  */
 function drush_deployment_drush_command() {
   $items = array();
-  $items['deployment'] = array(
+  $items['release'] = array(
     'description' => '',
     'arguments' => array(
       'filling' => 'e.g. release rollback pre-release-check'
@@ -43,7 +43,7 @@ function drush_deployment_drush_command() {
   $loader->register();
 
   foreach(\Drush\Deployment\Deployment::getCommands() as $command) {
-    $items['deployment-' . $command] = array(
+    $items['release-' . $command] = array(
       'description' => '',
       'arguments' => array(),
       'options' => array(),
