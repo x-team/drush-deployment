@@ -1,4 +1,4 @@
-Drush Deployment Module 
+Drush Deployment Module
 based on drush_deploy module but concentrated on Tagging not Branch
 
 ex.1
@@ -33,3 +33,8 @@ function deployment_drush_command() {
   );
 }
 ```
+
+HowTo: Debug
+============
+
+To dump array or object use `drush_print_r()` function.
