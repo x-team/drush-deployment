@@ -24,8 +24,10 @@ HowTo: Debug
 
 To dump array or object use `drush_print_r()` function.
 
-Config Sample
-=============
+Config:
+======
+
+Place your configuration in your drush folder, usually in ~/.drush/. The filename must be `deployment.drushrc.php`.
 
 ```
 <?php
