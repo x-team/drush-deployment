@@ -18,8 +18,12 @@ drush release-pre-check --tag=ver2
 ex.4
 drush release-post-check {prod|stage|dev}
 
+ex.5
+drush release-notes ver1.0 ver1.1
+list down all diff between tags
 
 HowTo: Debug
+
 ============
 
 To dump array or object use `drush_print_r()` function.
