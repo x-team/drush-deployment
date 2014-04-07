@@ -1,5 +1,19 @@
 Drush Deployment Module
-based on drush_deploy module but concentrated on Tagging not Branch
+=======================
+
+Is based on [drush_deploy](http://drupal.org/project/drush_deploy) module written by [Mark Sonnabaum](https://drupal.org/user/75278), but concentrated on tagging not branching.
+
+
+Installation:
+=============
+
+Install like a typical Drupal module.
+
+1. `drush en drush_deployment`
+
+2. Or go to Drupal module page and look for `Enhanced Drush Deployment` and
+enable it by checking the checkbox
+
 
 To deploy a tag
 ===============
