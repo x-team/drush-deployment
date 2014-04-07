@@ -1,35 +1,35 @@
-Drush Deployment Module 
+Drush Deployment Module
 based on drush_deploy module but concentrated on Tagging not Branch
 
-ex.1
-drush deployment release --tag=ver1
+To deploy a tag
+===============
 
-ex.2
-drush deployment rollback --tag=ver1
+Example 1
+drush dtag v.7.26-1.0
 
-ex.3
-drush deployment pre-release-check --tag=ver1
+Example 2
+drush rt v.7.26-1.0
 
+Example 3
+drush release-tag v.7.26-1.0
+
+
+HowTo: Debug
+
+============
+
+To dump array or object use `drush_print_r()` function.
+
+Config:
+======
+
+Place your configuration in your drush folder, usually in ~/.drush/. The filename must be `deployment.drushrc.php`.
 
 ```
-/**
- * Implementation of hook_drush_command().
- */
-function deployment_drush_command() {
-  $items = array();
-  $items['deployment'] = array(
-    'description' => '',
-    'arguments' => array(
-      'filling' => 'e.g. release rollback pre-release-check'
-    ),
-    'options' => array(
-      'tag' => 'e.g. ver1, ver2, tagname'
-    ),
-    'examples' => array(
-      'drush deployment release --tag=ver1' => 'sample drush deployment using release with tagname'
-    ),
-    'bootstrap' => DRUSH_BOOTSTRAP_DRUSH,
-    'config' => 'deployment',
-  );
-}
+<?php
+  $options['deploy-repository'] = 'git://github.com/geraldvillorente/test-drupal.git';
+  $options['docroot'] = '/media/Data/www/test';
+?>
 ```
+
+See `drush` for more commands.
