@@ -41,11 +41,11 @@ Config:
 
 Place your configuration in your drush folder, usually in ~/.drush/. The filename must be `deployment.drushrc.php`.
 
-
+```
 <?php
   $options['deploy-repository'] = 'git://github.com/geraldvillorente/test-drupal.git';
   $options['docroot'] = '/media/Data/www/test';
 ?>
-
+```
 
 See `drush` for more commands.
