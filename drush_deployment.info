@@ -1,1 +1,4 @@
-name = Drush Deployment
+name = Enhanced Drush Deployment
+description = Allows administrators to deploy code in production via version control.
+package = Drush
+core = 7.x
