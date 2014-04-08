@@ -1,5 +1,7 @@
 # Drush Deployment Module
 
+![Banner](assets/banner.jpg)
+
 This module is based on [drush_deploy](http://drupal.org/project/drush_deploy) module written by [Mark Sonnabaum](https://drupal.org/user/75278), but concentrated on tagging not branching.
 
 **Contributors:** [X-Team](https://github.com/x-team), [Paul Jebulan de Paula](https://github.com/fusionx1), [Gerald Villorente](https://github.com/geraldvillorente)  
