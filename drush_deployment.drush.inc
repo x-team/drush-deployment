@@ -67,14 +67,20 @@ function drush_deployment_drush_init() {
  */
 function drush_deployment_drush_help($section) {
   switch ($section) {
-    case 'drush:release-pre-check':
-      return dt('Check everything before releasing.');
-    case 'drush:release-cleanup':
-      return dt('Clean up after release.');
-    case 'drush:release-rollback':
-      return dt('Rollback just in case something went wrong.');
-    case 'drush:release-post-check':
-      return dt('Perform necessary check up after the release.');
+    case 'drush:deployment-config':
+      return dt('Return an array of configuration.');
+    case 'drush:release-check-target':
+      return dt('Check the target directory is a valid git repository.');
+    case 'drush:git-init':
+      return dt('Initialize git in target directory.');
+    case 'drush:release-tag':
+      return dt('Checkout/deploy a tag.');
+    case 'drush:clone-repo':
+      return dt('Clone a repository.');
+    case 'drush:list-tags':
+      return dt('List all tags.');
+    case 'drush:latest-tag':
+      return dt('Get the latest tag.');
   }
 }
 
@@ -206,7 +212,6 @@ function _drush_list_tags() {
  * Get latest tag.
  */
 function _drush_get_latest_tag() {
-  drush_print("test");
   $repo = _drush_init_elephant();
   return $repo->getLastTag();
 }
