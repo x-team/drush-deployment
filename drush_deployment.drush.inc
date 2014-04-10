@@ -269,7 +269,25 @@ function _drush_clear_cache($arg) {
   }
   else {
     // Native Drupal methods here.
-    drupal_flush_all_caches();
+    switch ($arg) {
+      case 'all':
+        drupal_flush_all_caches();
+        break;
+
+      case 'js-css':
+        // Change query-strings on css/js files to enforce reload for all users.
+        _drupal_flush_css_js();
+        drupal_clear_css_cache();
+        drupal_clear_js_cache();
+        break;
+
+      case 'menu':
+        menu_rebuild();
+        break;
+
+      case 'registry':
+        registry_rebuild();
+        break;
   }
 }
 
