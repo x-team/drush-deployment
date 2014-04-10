@@ -135,6 +135,29 @@ function drush_deployment_drush_command() {
     'aliases' => array('glt'),
   );
 
+  $items['rebuild-cache'] = array(
+    'description' => '',
+    'callback' => '_drush_rebuild_cache',
+    'options' => array(
+      'clear' => 'Clear and rebuild the cache after deployment.',
+    ),
+    'arguments' => array(
+      'all' => 'Clear all cache.',
+      'js-css' => 'Clear js and css cache.',
+      'theme-registry' => 'Reset theme-registry.',
+      'menu' => 'Clear menu cache.',
+      'block' => 'Clear block cache.',
+      'module-list' => 'Clear module list cache.',
+      'registry' => 'Clear entire registry.',
+      'views' => 'Clear views cache.',
+    ),
+    'examples' => array(
+      'drush rebuild-cache --clear all' => 'Clear and rebuild the cache after deployment.',
+      'drush rebuild-cache --clear views' => 'Clear and rebuild the views cache after deployment.',
+      'drush rebuild-cache --clear block' => 'Clear and rebuild the block cache after deployment.',
+    ),
+  );
+
   return $items;
 }
 
@@ -152,7 +175,7 @@ function _drush_git_check_target_dir() {
   }
   catch (Exception $e) {
     // Initialize git init.
-    drush_print(dt('@docroot is not a valid git repository. Run "drush git-init" to initialize.', array('@docroot' => _drush_get_docroot())));
+    drush_log(dt('@docroot is not a valid git repository. Run "drush git-init" to initialize.', array('@docroot' => _drush_get_docroot())), 'failed');
   }
 }
 
@@ -163,8 +186,9 @@ function _drush_git_check_target_dir() {
 function _drush_git_init() {
   // Target repository.
   $repo = _drush_init_elephant();
+  drush_confirm('Do you really want to continue?');
   $repo->init();
-  drush_print(dt('@docroot is now a valid git repository.', array('@docroot' => _drush_get_docroot())));
+  drush_log(dt('@docroot is now a valid git repository.', array('@docroot' => _drush_get_docroot())), 'success');
 }
 
 
@@ -179,11 +203,12 @@ function _drush_checkout_tag() {
   $repo = _drush_init_elephant();
 
   try {
+    drush_confirm('Do you really want to continue?');
     $repo->checkout($repo->getTag($tag_name));
-    drush_print(dt('You just checkout @tag_name tag.', array('@tag_name' => $tag_name)));
+    drush_log(dt('You just checkout @tag_name tag.', array('@tag_name' => $tag_name)), 'success');
   }
   catch (Exception $e) {
-    drush_print(dt('The tag you specified does not exist. Make sure that you cloned the source repository.'));
+    drush_log(dt('The tag you specified does not exist. Make sure that you cloned the source repository.'), 'error');
   }
 }
 
@@ -193,9 +218,10 @@ function _drush_checkout_tag() {
  */
 function _drush_clone_repo() {
   $repo = _drush_init_elephant();
+  drush_confirm('Do you really want to continue?');
   drush_print(dt('This may take some time depending on how big is your repository.'));
   $repo->cloneFrom(_drush_git_url(), _drush_get_docroot());
-  drush_print(dt('You just cloned a repository.'));
+  drush_log(dt('You just cloned a repository.'), 'success');
 }
 
 
@@ -214,4 +240,46 @@ function _drush_list_tags() {
 function _drush_get_latest_tag() {
   $repo = _drush_init_elephant();
   return $repo->getLastTag();
+}
+
+
+/**
+ * Clear and rebuild the cache.
+ */
+function _drush_rebuild_cache() {
+  $args = func_get_args();
+  druplicon_drush_exit();
+  if (isset($args[0])) {
+    drush_confirm('Do you really want to continue?');
+    _drush_clear_cache($args[0]);
+    _drush_rebuild_drupal_cache();
+    drush_log(dt('Cache has been rebuilt.'), 'success');
+  }
+  else {
+    drush_log(dt('Command failed. Check the supplied parameters.'), 'error');
+    druplicon_drush_exit();
+  }
+}
+
+
+/**
+ * Clear cache.
+ */
+function _drush_clear_cache($arg) {
+  if (function_exists('exec')) {
+    exec('drush cc ' . $arg . ' -y');
+  }
+  else {
+    // Native Drupal methods here.
+    drupal_flush_all_caches();
+  }
+}
+
+
+/**
+ * Rebuild the cache.
+ */
+function _drush_rebuild_drupal_cache() {
+  // Warm homepage cache.
+  // There is a module called Cache Warmer by Perusio. Worth checking it.
 }
