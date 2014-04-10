@@ -248,7 +248,6 @@ function _drush_get_latest_tag() {
  */
 function _drush_rebuild_cache() {
   $args = func_get_args();
-  druplicon_drush_exit();
   if (isset($args[0])) {
     drush_confirm('Do you really want to continue?');
     _drush_clear_cache($args[0]);
@@ -257,7 +256,6 @@ function _drush_rebuild_cache() {
   }
   else {
     drush_log(dt('Command failed. Check the supplied parameters.'), 'error');
-    druplicon_drush_exit();
   }
 }
 
