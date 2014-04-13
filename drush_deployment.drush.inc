@@ -16,38 +16,13 @@ use GitElephant\Repository;
 
 /**
  * Instantiate the Elephant.
+ *
+ * @return object
+ *   An object of the specified repository.
  */
 function _drush_init_elephant() {
   $git_dir = _drush_get_docroot();
   return new Repository($git_dir);
-}
-
-
-/**
- * Get document root.
- */
-function _drush_get_docroot() {
-  return drush_get_option('docroot');
-}
-
-
-/**
- *  Get Git url.
- */
-function _drush_git_url() {
-  return drush_get_option('deploy-repository');
-}
-
-
-/**
- * Get config options.
- */
-function _drush_get_options() {
-  $options = array();
-  $options['document_root'] = _drush_get_docroot();
-  $options['git_url'] = _drush_git_url();
-
-  return drush_print_r($options);
 }
 
 
@@ -87,6 +62,9 @@ function drush_deployment_drush_help($section) {
 
 /**
  * Implements hook_drush_command().
+ *
+ * @return array
+ *   A list of drush commands.
  */
 function drush_deployment_drush_command() {
   $items = array();
@@ -159,6 +137,43 @@ function drush_deployment_drush_command() {
   );
 
   return $items;
+}
+
+
+/**
+ * Get document root.
+ *
+ * @return string
+ *   The path of the repository.
+ */
+function _drush_get_docroot() {
+  return drush_get_option('docroot');
+}
+
+
+/**
+ * Get Git url.
+ *
+ * @return string
+ *   The url of the remote repository.
+ */
+function _drush_git_url() {
+  return drush_get_option('deploy-repository');
+}
+
+
+/**
+ * Get config options.
+ *
+ * @return array
+ *   Settings of deployment.drushrc.php.
+ */
+function _drush_get_options() {
+  $options = array();
+  $options['document_root'] = _drush_get_docroot();
+  $options['git_url'] = _drush_git_url();
+
+  return drush_print_r($options);
 }
 
 
@@ -236,6 +251,9 @@ function _drush_list_tags() {
 
 /**
  * Get latest tag.
+ *
+ * @return string
+ *   The latest tag.
  */
 function _drush_get_latest_tag() {
   $repo = _drush_init_elephant();
@@ -262,6 +280,9 @@ function _drush_rebuild_cache() {
 
 /**
  * Clear cache.
+ *
+ * @param $arg string
+ *   The cache type to be cleared.
  */
 function _drush_clear_cache($arg) {
   if (function_exists('exec')) {
@@ -288,6 +309,10 @@ function _drush_clear_cache($arg) {
       case 'registry':
         registry_rebuild();
         break;
+
+      default:
+        break;
+    }
   }
 }
 
