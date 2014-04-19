@@ -425,10 +425,7 @@ function _drush_rebuild_drupal_cache() {
 function _drush_tag_notes($tag1n = NULL, $tag2n = NULL) {
   $git = drush_get_option('git', 'git');
   // Make sure we are in the working directory started.
-  drush_shell_exec('chdir ' . drush_cwd()); 
-  if (!is_dir(".git")) {
-    drush_log("This must be run from the root directory of your Git repository.");
-  }
+  _drush_git_check_target_dir();
 
   // Fill in calculated tags if both are not given.
   if (!isset($tag2n)) {
