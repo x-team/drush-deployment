@@ -504,7 +504,7 @@ function _drush_format_changes($items, $prev_tag, $tag1, $tag2, $git) {
   if (drush_get_option('commit-count')) {
     $rendered .= ' (' . trim(drush_get_option('commit-count')) . ' commits)';
   }
-  $rendered .= ":<\n";
+  $rendered .= ":\n";
 
   if (!empty($items)) {
     $rendered .= "\n  " . implode("\n  ", $items) . "\n";
