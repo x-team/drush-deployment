@@ -56,7 +56,7 @@ function drush_deployment_drush_help($section) {
       return dt('List all tags.');
     case 'drush:latest-tag':
       return dt('Get the latest tag.');
-    case 'drush:release-notes':
+    case 'drush:tag-notes':
       return dt('Display commit notes between tags');
 
   }
@@ -153,13 +153,13 @@ function drush_deployment_drush_command() {
     'aliases' => array('dm-lsb'),
   );
 
-  $items['release-notes'] = array(
+  $items['tag-notes'] = array(
     'description' => 'Generate release notes using all commits between two tags',
     'arguments' => array(
       'tag 1' => 'The first tag, the starting point for the log.',
       'tag 2' => 'The second tag, the ending point for the log. ',
     ),
-    'callback' => ''
+    'callback' => '_drush_tag_notes'
     'aliases' => array('rn', 'relnotes'),
     'bootstrap' => DRUSH_BOOTSTRAP_DRUSH,
   );
