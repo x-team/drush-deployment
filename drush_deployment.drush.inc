@@ -159,7 +159,7 @@ function drush_deployment_drush_command() {
       'tag 1' => 'The first tag, the starting point for the log.',
       'tag 2' => 'The second tag, the ending point for the log. ',
     ),
-    'callback' => '_drush_tag_notes'
+    'callback' => '_drush_tag_notes',
     'aliases' => array('rn', 'relnotes'),
     'bootstrap' => DRUSH_BOOTSTRAP_DRUSH,
   );
