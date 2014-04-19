@@ -245,7 +245,7 @@ function _drush_clone_repo() {
  */
 function _drush_list_tags() {
   $repo = _drush_init_elephant();
-  drush_print($repo->listTags());
+  drush_print($repo->getTags());
 }
 
 

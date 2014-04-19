@@ -370,6 +370,60 @@ class Repository
     }
 
     /**
+     * List all branches.
+     *
+     * @param bool $namesOnly return an array of branch names as a string
+     * @param bool $all       lists also remote branches
+     *
+     * @return string
+     */
+    public function listBranches($namesOnly = false, $all = false)
+    {
+        $branches = array();
+        if ($namesOnly) {
+            $outputLines = $this->caller->execute(BranchCommand::getInstance()->lists($all, true))->getOutputLines(
+                true
+            );
+            $branches = array_map(
+                function ($v) {
+                    return ltrim($v, '* ');
+                },
+                $outputLines
+            );
+            $sorter = function ($a, $b) {
+                if ($a == 'master') {
+                    return -1;
+                } else {
+                    if ($b == 'master') {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }
+            };
+        } else {
+            $outputLines = $this->caller->execute(BranchCommand::getInstance()->lists($all))->getOutputLines(true);
+            foreach ($outputLines as $branchLine) {
+                $branches[] = Branch::createFromOutputLine($this, $branchLine);
+            }
+            $sorter = function (Branch $a, Branch $b) {
+                if ($a->getName() == 'master') {
+                    return -1;
+                } else {
+                    if ($b->getName() == 'master') {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }
+            };
+        }
+        usort($branches, $sorter);
+
+        return $branches;
+    }
+
+    /**
      * Return the actually checked out branch
      *
      * @return Objects\Branch
@@ -509,7 +563,6 @@ class Repository
         $tags = array();
         $this->caller->execute(TagCommand::getInstance()->lists());
         foreach ($this->caller->getOutputLines() as $tagString) {
-            print_r($tagString);
             if ($tagString != '') {
                 $tags[] = new Tag($this, trim($tagString));
             }
@@ -518,15 +571,20 @@ class Repository
     }
 
     /**
-     * Gets a list of tags.
+     * Get a list of tags.
      *
      * @return string
      */
-    public function listTags()
+    public function listTags($array = FALSE)
     {
         $this->caller->execute(TagCommand::getInstance()->lists());
-        foreach ($this->caller->getOutputLines() as $tagString) {
-            print $tagString . "\n";
+        if ($array == TRUE) {
+            return $this->caller->getOutputLines();
+        }
+        else {
+            foreach ($this->caller->getOutputLines() as $tagString) {
+                print "\n" . $tagString;
+            }
         }
     }
 
