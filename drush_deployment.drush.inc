@@ -70,15 +70,15 @@ function drush_deployment_drush_command() {
   $items = array();
 
   $items['deployment-config'] = array(
-    'aliases' => array('getconf'),
+    'aliases' => array('dm-conf'),
     'description' => 'Return an array of configuration.',
     'callback' => '_drush_get_options',
     'bootstrap' => DRUSH_BOOTSTRAP_DRUSH,
     'config' => 'deployment',
   );
 
-  $items['release-check-target'] = array(
-    'aliases' => array('rct', 'release-ct'),
+  $items['check-repo'] = array(
+    'aliases' => array('dm-check'),
     'description' => 'Check the target directory is a valid git repository.',
     'callback' => '_drush_git_check_target_dir',
   );
@@ -86,31 +86,38 @@ function drush_deployment_drush_command() {
   $items['git-init'] = array(
     'description' => 'Initialize git in target directory.',
     'callback' => '_drush_git_init',
-    'aliases' => array('giti', 'gi'),
+    'aliases' => array('dm-gi'),
   );
 
   $items['release-tag'] = array(
     'description' => 'Checkout/deploy a tag.',
     'callback' => '_drush_checkout_tag',
-    'aliases' => array('rt', 'dtag'),
+    'aliases' => array('dm-rt', 'dm-dtag'),
+    'options' => array(
+      'maintenance' => 'Manage site maintenance page.',
+    ),
+    'examples' => array(
+      'drush release-tag v.1.0' => 'Deploy v.1.0 tag.',
+      'drush release-tag v.1.0 --maintenance on' => 'Put the site in maintenance mode before deploying the tag.',
+    ),
   );
 
   $items['clone-repo'] = array(
     'description' => 'Clone a repository.',
     'callback' => '_drush_clone_repo',
-    'aliases' => array('cgr', 'cr'),
+    'aliases' => array('dm-cr'),
   );
 
   $items['list-tags'] = array(
     'description' => 'List all tags.',
     'callback' => '_drush_list_tags',
-    'aliases' => array('ls-tags'),
+    'aliases' => array('dm-lts'),
   );
 
   $items['latest-tag'] = array(
     'description' => 'Get the latest tag.',
     'callback' => '_drush_get_latest_tag',
-    'aliases' => array('glt'),
+    'aliases' => array('dm-lt'),
   );
 
   $items['rebuild-cache'] = array(
@@ -133,6 +140,27 @@ function drush_deployment_drush_command() {
       'drush rebuild-cache --clear all' => 'Clear and rebuild the cache after deployment.',
       'drush rebuild-cache --clear views' => 'Clear and rebuild the views cache after deployment.',
       'drush rebuild-cache --clear block' => 'Clear and rebuild the block cache after deployment.',
+    ),
+    'aliases' => array('dm-rc'),
+  );
+
+  $items['list-branches'] = array(
+    'description' => 'List all branches.',
+    'callback' => '_drush_get_branches',
+    'aliases' => array('dm-lsb'),
+  );
+
+  $items['maintenance'] = array(
+    'description' => 'Manage site maintenance page.',
+    'callback' => '_drush_maintenance',
+    'aliases' => array('dm-m'),
+    'arguments' => array(
+      'on' => 'Turn on maintenance mode.',
+      'off' => 'Turn off maintenance mode.',
+    ),
+    'examples' => array(
+      'drush maintenance on' => 'Put the site offline.',
+      'drush maintenance off' => 'Put the site online.',
     ),
   );
 
@@ -186,7 +214,7 @@ function _drush_git_check_target_dir() {
 
   try {
     $repo->getStatus();
-    drush_print(dt('@docroot is a valid git repository.', array('@docroot' => _drush_get_docroot())));
+    drush_print(dt('Directory @docroot is a valid git repository.', array('@docroot' => _drush_get_docroot())));
   }
   catch (Exception $e) {
     // Initialize git init.
@@ -217,6 +245,23 @@ function _drush_checkout_tag() {
 
   $repo = _drush_init_elephant();
 
+  // Verify if the tag is correct.
+  $tags = $repo->listTags($array = TRUE);
+  if (!in_array($tag_name, $tags)) {
+    drush_log(dt('Tag @tag_name does not exist.', array('@tag_name' => $tag_name)), 'error');
+    exit;
+  }
+
+  // Put the site offline.
+  if (isset($args[1]) && $args[1] === 'on') {
+    variable_set('maintenance_mode', 1);
+    drush_log(dt('Site is now offline.'), 'success');
+  }
+  else {
+    drush_log(dt('Invalid argument for maintenance mode!'), 'error');
+    exit;
+  }
+
   try {
     drush_confirm('Do you really want to continue?');
     $repo->checkout($repo->getTag($tag_name));
@@ -245,7 +290,7 @@ function _drush_clone_repo() {
  */
 function _drush_list_tags() {
   $repo = _drush_init_elephant();
-  drush_print($repo->getTags());
+  drush_print_r($repo->listTags());
 }
 
 
@@ -262,6 +307,18 @@ function _drush_get_latest_tag() {
 
 
 /**
+ * List all branches.
+ */
+function _drush_get_branches() {
+  $repo = _drush_init_elephant();
+  $branches = $repo->getBranches($namesOnly = TRUE, $all = TRUE);
+  foreach ($branches as $branch) {
+    drush_print('  ' . $branch);
+  }
+}
+
+
+/**
  * Clear and rebuild the cache.
  */
 function _drush_rebuild_cache() {
@@ -270,7 +327,7 @@ function _drush_rebuild_cache() {
     drush_confirm('Do you really want to continue?');
     _drush_clear_cache($args[0]);
     _drush_rebuild_drupal_cache();
-    drush_log(dt('Cache has been rebuilt.'), 'success');
+    drush_log(dt('Cache has been primed.'), 'success');
   }
   else {
     drush_log(dt('Command failed. Check the supplied parameters.'), 'error');
@@ -311,6 +368,28 @@ function _drush_clear_cache($arg) {
         break;
 
       default:
+        break;
+    }
+  }
+}
+
+
+/**
+ * Manage maintenance page.
+ */
+function _drush_maintenance() {
+  $args = func_get_args();
+  if (isset($args[0])) {
+    drush_confirm('Do you really want to continue?');
+    switch ($args[0]) {
+      case 'on':
+        variable_set('maintenance_mode', 1);
+        drush_log(dt('Site is now offline.'), 'success');
+        break;
+
+      case 'off':
+        variable_set('maintenance_mode', 0);
+        drush_log(dt('Site is now online.'), 'success');
         break;
     }
   }
