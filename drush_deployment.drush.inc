@@ -170,7 +170,7 @@ function drush_deployment_drush_command() {
     'callback' => '_drush_deploy_updates',
     'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_FULL,
   );
-  
+
   $items['tag-notes'] = array(
     'description' => 'Generate release notes using all commits between two tags',
     'arguments' => array(
@@ -187,7 +187,7 @@ function drush_deployment_drush_command() {
 
 
 /**
- * Displays commits. 
+ * Displays commits.
  */
 function _drush_tag_notes($tag1n = NULL, $tag2n = NULL) {
   $git = drush_get_option('git', 'git');
@@ -261,7 +261,6 @@ function _drush_tag_notes($tag1n = NULL, $tag2n = NULL) {
   return TRUE;
 }
 
-// Other functions
 
 /**
  * Generates the output.
@@ -280,6 +279,11 @@ function _drush_format_changes($items, $prev_tag, $tag1, $tag2, $git) {
   return array('rendered' => $rendered, 'raw' => $items);
 }
 
+
+/**
+ * @TODO
+ *   Document this function.
+ */
 function _drush_format_changelog($items, $tag) {
   drush_shell_exec("more *.info | grep name");
   $name = "";
@@ -301,6 +305,7 @@ function _drush_format_changelog($items, $tag) {
   }
   return array('raw' => $items, 'rendered' => $changelog);
 }
+
 
 /**
  * Gets the changes and returns them in an array.
@@ -327,6 +332,11 @@ function _drush_get_changes($tag1, $tag2, $git) {
   return $changes;
 }
 
+
+/**
+ * @TODO
+ *   Document this function.
+ */
 function _drush_get_items_array($issues) {
   $baseurl = drush_get_option('baseurl', '/node/');
   if (strpos($baseurl, '%s') == FALSE) {
