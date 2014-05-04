@@ -163,6 +163,12 @@ function drush_deployment_drush_command() {
     ),
   );
 
+  $items['deploy-updates'] = array(
+    'description' => 'Deploy all the changes.',
+    'callback' => '_drush_deploy_updates',
+    'bootstrap' => DRUSH_BOOTSTRAP_DRUPAL_FULL,
+  );
+
   return $items;
 }
 
@@ -265,6 +271,7 @@ function _drush_checkout_tag() {
     drush_confirm('Do you really want to continue?');
     $repo->checkout($repo->getTag($tag_name));
     drush_log(dt('You just checkout @tag_name tag.', array('@tag_name' => $tag_name)), 'success');
+    _drush_deploy_updates();
   }
   catch (Exception $e) {
     drush_log(dt('The tag you specified does not exist. Make sure that you cloned the source repository.'), 'error');
@@ -390,6 +397,30 @@ function _drush_maintenance() {
   }
 }
 
+
+/**
+ * Manage the depployment of hook_update_N and features.
+ */
+function _drush_deploy_updates() {
+  // Clear the cache.
+  if (function_exists(drush_cache_command_clear)) {
+    drush_cache_command_clear($type = 'all');
+  }
+  // Run update.php.
+  if (function_exists(drush_core_updatedb)) {
+    drush_print(dt('Running update.php...'));
+    drush_core_updatedb();
+  }
+  // Revert all features.
+  if (module_exists('features')) {
+    drush_print(dt('Reverting features...'));
+    drush_features_revert_all();
+  }
+  // Run drush cc all.
+  if (function_exists(drush_cache_command_clear)) {
+    drush_cache_command_clear($type = 'all');
+  }
+}
 
 /**
  * Rebuild the cache.
