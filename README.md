@@ -53,3 +53,5 @@ list down all diff between tags
 To dump array or object use `drush_print_r()` function.
 
 See `drush` for more commands.
+
+Maintained by the [developers at x-team](https://www.x-team.com) | [developer blog](https://www.x-team.com/blog/)
